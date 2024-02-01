@@ -8,7 +8,7 @@ hash_len = 32
 
 # Blake2b
 [[security_associations]]
-key = "dab2a3206b647615aaa8fa0b2380e3a12a90ce44002edeef790bfb5844a6fe8c0"
+key = "dab2a3206b647615aaa8fa0b2380e3a12a90ce44002edeef790bfb5844a6fe8c"
 key_id = 0x2B0B
 key_len = 32
 hash_algo = 0x1

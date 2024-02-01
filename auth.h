@@ -18,7 +18,25 @@
  * @param policy The associated security policy.
  * @return       Zero on success, non-zero otherwise.
  */
-int authentication_append(struct port *p, struct ptp_message *m, struct security_policy *policy);
+int authentication_append_delayed(struct port *p, struct ptp_message *m, struct security_policy *policy);
+
+/**
+ * Appends the Authentication TLV to a PTP message, if indicated by the security policy.
+ * @param p      The port the message is to be sent on. For TCs: the ingress port.
+ * @param m      The message to be modified.
+ * @param policy The associated security policy.
+ * @return       Zero on success, non-zero otherwise.
+ */
+int authentication_append_immediate(struct port *p, struct ptp_message *m, struct security_policy *policy);
+
+/**
+ * Calculates the ICV for an existing Authentication TLV, if indicated by the security policy.
+ * @param p      The port the message is to be sent on. For TCs: the ingress port.
+ * @param m      The message to be modified.
+ * @param policy The associated security policy.
+ * @return       Zero on success, non-zero otherwise.
+ */
+int protect_message_delayed(struct port *p, struct ptp_message *m, struct security_policy *policy);
 
 /**
  * Calculates the ICV for an existing Authentication TLV, if indicated by the security policy.
