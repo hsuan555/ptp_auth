@@ -281,7 +281,7 @@ struct slave_rx_sync_timing_data_tlv {
  * sequenceNo and RES currently have a size of zero
  * (cf. 16.14.3.7 & 16.14.3.8 in IEEE1588-2019)
  **/
-struct authentication_tlv {
+struct authentication_tlv_immediate {
 	Enumeration16		type;
 	UInteger16			length;
 	UInteger8			spp;
@@ -293,7 +293,20 @@ struct authentication_tlv {
 	UInteger8			icv[0]; // size depends on ICV algorithm used
 } PACKED;
 
+struct authentication_tlv_delayed {
+	Enumeration16		type;
+	UInteger16			length;
+	UInteger8			spp;
+	Octet				secParamIndicator;
+	Octet				keyId[4];
+	Octet				disclosedKey[32]; 
+	UInteger8			sequenceNo[0];
+	UInteger8			res[0];
+	UInteger8			icv[0]; // size depends on ICV algorithm used
+} PACKED;
+
 #define NOT_PRESENT		0
+#define PRESENT			1
 #define SEC_PARAM_INDICATOR(DP, SP, RP) \
 	((DP & 0x1) << 2) | \
 	((SP & 0x1) << 1) | \
