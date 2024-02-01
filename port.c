@@ -2886,15 +2886,27 @@ int port_prepare_and_send(struct port *p, struct ptp_message *msg,
 	if (p->protect_messages && policy && authentication_append(p, msg, policy)) {
 		pr_err("%s: append authentication TLV failed", p->log_name);
 	}
+	
+	/* if we appended a TLV, we have to add the ICV to it as the last step */
+	if (p->protect_messages && policy && protect_message(p, msg, policy)) {
+		pr_err("%s: calculating ICV failed", p->log_name);
+	}
+
+	/* if secure processing is required, append the TLV */
+	if (p->protect_messages && policy && authentication_append(p, msg, policy)) {
+		pr_err("%s: append authentication TLV failed", p->log_name);
+	}
 
 	if (msg_pre_send(msg)) {
 		return -1;
 	}
 	
 	/* if we appended a TLV, we have to add the ICV to it as the last step */
-	if (p->protect_messages && policy && protect_message(p, msg, policy)) {
+	if (p->protect_messages && policy && protect_message_2(p, msg, policy)) {
 		pr_err("%s: calculating ICV failed", p->log_name);
 	}
+
+	//pr_err("%d", ntohs(msg->header.messageLength));
 
 	if (msg_unicast(msg)) {
 		cnt = transport_sendto(p->trp, &p->fda, event, msg);

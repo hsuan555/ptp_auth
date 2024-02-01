@@ -59,7 +59,31 @@ int protect_message(struct port *p, struct ptp_message *m, struct security_polic
 	}
 	
 	/* As per the standard, the ICV field is not considered when hashing */
+	// len = ntohs(m->header.messageLength) - sa->hash_len;
+	len = m->header.messageLength - sa->hash_len;
+	append_icv(sa, (unsigned char *)m + len, (unsigned char *)m, len);
+
+	return 0;
+}
+
+int protect_message_2(struct port *p, struct ptp_message *m, struct security_policy *policy) 
+{
+	struct security_association *sa;
+	int len;
+
+	/* only immediate processing currently supported */
+	if (policy->spp_immediate == SPP_NO_SECURITY) {
+		return 0;
+	}
+
+	sa = query_security_association(policy->spp_immediate, clock_get_sad(p->clock));
+	if (!sa) {
+		return -1;
+	}
+	
+	/* As per the standard, the ICV field is not considered when hashing */
 	len = ntohs(m->header.messageLength) - sa->hash_len;
+	//len = m->header.messageLength - sa->hash_len;
 	append_icv(sa, (unsigned char *)m + len, (unsigned char *)m, len);
 
 	return 0;
